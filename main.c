@@ -79,8 +79,8 @@ void sepiaFilter(Image * img) {
         }
     }
 }
-
-int checkTopLeftBorder(int x, int size){
+    
+int checkMin(int x, int size){
     if(x - size/2 > 0){
         return x - size/2;
     }
@@ -89,7 +89,7 @@ int checkTopLeftBorder(int x, int size){
     }
 }
 
-int checkBottomRightBorder(int x, int size, int max){
+int checkMax(int x, int size, int max){
     if(x + size/2 <= max-1){
         return x+size/2;
     }
@@ -110,10 +110,10 @@ void blur(Image * img){
             int nPixels = 0;
             // Getting each pixel that will blur the pixel and 
             // keeping the average on Pixel average
-            unsigned int max_h = checkBottomRightBorder(i,size,img->height);
-            unsigned int max_w = checkBottomRightBorder(j,size,img->width);
-            for(unsigned int x = checkTopLeftBorder(i, size); x < max_h; ++x) {
-                for(unsigned int y = checkTopLeftBorder(j, size); y < max_w; ++y){
+            unsigned int max_h = checkMax(i,size,img->height);
+            unsigned int max_w = checkMax(j,size,img->width);
+            for(unsigned int x = checkMin(i, size); x < max_h; ++x) {
+                for(unsigned int y = checkMin(j, size); y < max_w; ++y){
                     average.r += img->pixel[x][y].r;
                     average.g += img->pixel[x][y].g;
                     average.b += img->pixel[x][y].b;
@@ -165,21 +165,21 @@ void flip(Image * img){
     if (horizontal == 1) w /= 2;
     else h /= 2;
 
-    for (int i2 = 0; i2 < h; ++i2) {
+    for (int i = 0; i < h; ++i) {
         for (int j = 0; j < w; ++j) {
-            int x = i2, y = j;
+            int x = i, y = j;
 
             if (horizontal == 1) y = img->width - 1 - j;
-            else x = img->height - 1 - i2;
+            else x = img->height - 1 - i;
 
             Pixel aux1;
-            aux1.r = img->pixel[i2][j].r;
-            aux1.g = img->pixel[i2][j].g;
-            aux1.b = img->pixel[i2][j].b;
+            aux1.r = img->pixel[i][j].r;
+            aux1.g = img->pixel[i][j].g;
+            aux1.b = img->pixel[i][j].b;
 
-            img->pixel[i2][j].r = img->pixel[x][y].r;
-            img->pixel[i2][j].g = img->pixel[x][y].g;
-            img->pixel[i2][j].b = img->pixel[x][y].b;
+            img->pixel[i][j].r = img->pixel[x][y].r;
+            img->pixel[i][j].g = img->pixel[x][y].g;
+            img->pixel[i][j].b = img->pixel[x][y].b;
 
             img->pixel[x][y].r = aux1.r;
             img->pixel[x][y].g = aux1.g;
@@ -254,7 +254,6 @@ int main() {
     int nOptions;
     scanf("%d", &nOptions);
     
-    // Modify image
     for(int i = 0; i < nOptions; ++i) {
         int option;
         scanf("%d", &option);
